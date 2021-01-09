@@ -16,7 +16,7 @@ setup(
     long_description = 'Azure devops builds commandline monitor',
     entry_points = {
         'console_scripts': [
-            'bmonitor = build_monitor_cli:cli'
+            'bmonitor = build_monitor_cli:entry'
         ]
     },
     install_requires=requirements,

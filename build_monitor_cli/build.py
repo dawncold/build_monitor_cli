@@ -37,18 +37,18 @@ def extract_status(build: Build):
         return 'processing'
     return build.result
 
-def list_builds(build_client, proj_name) -> List[Build]:
+def list_builds(build_client, proj_name, branch) -> List[Build]:
     global build_store
     if build_store:
         return build_store
     
-    update_build_store(build_client, proj_name)
+    update_build_store(build_client, proj_name, branch)
     
     return build_store
 
-def update_build_store(build_client, proj_name):
+def update_build_store(build_client, proj_name, branch):
     global build_store
-    resp = build_client.get_builds(proj_name, max_builds_per_definition=1)
+    resp = build_client.get_builds(proj_name, max_builds_per_definition=1, branch_name=f'refs/heads/{branch}')
     build_store = [Build(
             get_value(build, 'definition.name'),
             get_value(build, 'definition.path'),
@@ -73,9 +73,9 @@ class BuildUpdater(Thread):
 
     def run(self) -> None:
         start_time = time()
-        client, proj_name = self.args
+        client, proj_name, branch = self.args
         while not self.stopped:
             if time() - start_time > 30:
-                update_build_store(client, proj_name)
+                update_build_store(client, proj_name, branch)
                 start_time = time()
             sleep(.5)
