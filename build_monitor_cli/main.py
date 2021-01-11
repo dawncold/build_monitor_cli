@@ -32,11 +32,14 @@ def get_commit_metadata(gh_proj: str, commit_hash: str):
 
 def update_commit_metadata(gh_client, gh_proj, commit_hash):
     store_key = (gh_proj, commit_hash)
-    gh_repo = gh_client.get_repo(gh_proj)
-    gh_commit = gh_repo.get_commit(commit_hash)
-
-    metadata = (gh_commit.commit.committer.name, gh_commit.commit.committer.email)
-    commit_store[store_key] = metadata
+    try:
+        gh_repo = gh_client.get_repo(gh_proj)
+        gh_commit = gh_repo.get_commit(commit_hash)
+    except Exception:
+        pass
+    else:
+        metadata = (gh_commit.commit.committer.name, gh_commit.commit.committer.email)
+        commit_store[store_key] = metadata
 
 
 def sort_by_failed(builds: List[Build]) -> List[Build]:

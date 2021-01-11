@@ -47,20 +47,24 @@ def list_builds(build_client, proj_name, branch) -> List[Build]:
     return build_store
 
 def update_build_store(build_client, proj_name, branch):
-    global build_store
-    resp = build_client.get_builds(proj_name, max_builds_per_definition=1, branch_name=f'refs/heads/{branch}')
-    build_store = [Build(
-            get_value(build, 'definition.name'),
-            get_value(build, 'definition.path'),
-            get_value(build, 'build_number'),
-            extract_status(build),
-            get_value(build, 'requested_for.display_name'),
-            get_value(build, 'requested_for.unique_name'),
-            get_value(build, 'repository.id'),
-            get_value(build, 'source_branch'),
-            get_value(build, 'source_version'),
-            )
-            for build in resp.value]
+    try:
+        resp = build_client.get_builds(proj_name, max_builds_per_definition=1, branch_name=f'refs/heads/{branch}')
+    except Exception:
+        pass
+    else:
+        global build_store
+        build_store = [Build(
+                get_value(build, 'definition.name'),
+                get_value(build, 'definition.path'),
+                get_value(build, 'build_number'),
+                extract_status(build),
+                get_value(build, 'requested_for.display_name'),
+                get_value(build, 'requested_for.unique_name'),
+                get_value(build, 'repository.id'),
+                get_value(build, 'source_branch'),
+                get_value(build, 'source_version'),
+                )
+                for build in resp.value]
 
 class BuildUpdater(Thread):
     def __init__(self, args) -> None:
