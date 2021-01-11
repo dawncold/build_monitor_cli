@@ -5,7 +5,7 @@ with open('requirements.txt') as f:
 
 setup(
     name = "build_monitor_cli",
-    version = "1.0.0",
+    version = "1.0.1",
     author = "Zhen Tian",
     author_email = "zhen.tian@thoughtworks.com",
     description = 'Azure devops builds commandline monitor',
