@@ -19,7 +19,7 @@ def get_client(org_url, pat):
     credentials = BasicAuthentication('', pat)
     connection = Connection(base_url=org_url, creds=credentials)
     
-    return connection.clients_v5_1.get_build_client()
+    return connection.clients_v6_0.get_build_client()
 
 def get_github_client(gh_pat):
     return Github(gh_pat)

@@ -43,12 +43,14 @@ def list_builds(build_client, proj_name, branch) -> List[Build]:
         return build_store
     
     update_build_store(build_client, proj_name, branch)
+    if not build_store:
+        raise Exception('can not initialize build store')
     
     return build_store
 
 def update_build_store(build_client, proj_name, branch):
     try:
-        resp = build_client.get_builds(proj_name, max_builds_per_definition=1, branch_name=f'refs/heads/{branch}')
+        resp = build_client.get_builds(proj_name, max_builds_per_definition=1, branch_name=f'refs/heads/{branch}', query_order='queueTimeDescending')
     except Exception:
         pass
     else:
@@ -64,7 +66,7 @@ def update_build_store(build_client, proj_name, branch):
                 get_value(build, 'source_branch'),
                 get_value(build, 'source_version'),
                 )
-                for build in resp.value]
+                for build in resp]
 
 class BuildUpdater(Thread):
     def __init__(self, args) -> None:
